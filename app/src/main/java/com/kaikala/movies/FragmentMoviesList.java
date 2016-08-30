@@ -122,7 +122,7 @@ public class FragmentMoviesList extends Fragment {
 
     private class FetchMoviePostersTask extends AsyncTask<String, Void, ArrayList<MoviePoster>> {
         private final String TAG = FetchMoviePostersTask.class.getSimpleName();
-        final String KEY = "";
+        final String KEY = "d37d289fc8a6ecc38b01e7b306e1665b";
 
         @Override
         protected ArrayList<MoviePoster> doInBackground(String... params) {
