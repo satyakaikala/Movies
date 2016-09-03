@@ -13,13 +13,15 @@ public class MoviePoster implements Parcelable{
     private String mposterUrl;
     private String movieOverview;
     private String releaseDate;
+    private String mId;
 
-    public MoviePoster(String posterUrl, String overview, String title, String release, String rating) {
+    public MoviePoster(String posterUrl, String overview, String title, String release, String rating, String id) {
         mTitle = title;
         mposterUrl = posterUrl;
         movieOverview = overview;
         releaseDate = release;
         mrating = rating;
+        mId = id;
 
     }
 
@@ -29,6 +31,7 @@ public class MoviePoster implements Parcelable{
         mposterUrl = in.readString();
         movieOverview = in.readString();
         releaseDate = in.readString();
+        mId = in.readString();
     }
 
     public static final Creator<MoviePoster> CREATOR = new Creator<MoviePoster>() {
@@ -55,6 +58,7 @@ public class MoviePoster implements Parcelable{
         dest.writeString(mposterUrl);
         dest.writeString(movieOverview);
         dest.writeString(releaseDate);
+        dest.writeString(mId);
     }
 
     public String getmTitle() {
@@ -79,5 +83,7 @@ public class MoviePoster implements Parcelable{
         return mposterUrl;
     }
 
-
+    public String getmId(){
+        return mId;
+    }
 }

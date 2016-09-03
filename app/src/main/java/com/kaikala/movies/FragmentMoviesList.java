@@ -1,8 +1,10 @@
 package com.kaikala.movies;
 
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -33,6 +35,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 /**
  * Created by kaIkala on 8/17/2016.
  */
@@ -42,12 +47,14 @@ public class FragmentMoviesList extends Fragment {
     private static final String TAG = FragmentMoviesList.class.getSimpleName();
     private ImageAdapter imageAdapter;
     private static final String PREFERENCE_ORDER_KEY = "preference_order_key";
-
+    @BindView(R.id.grid_view) GridView movieThumbnailView;
     ArrayList<MoviePoster> mMovieAdapter;
-    Context ctx;
+
     public FragmentMoviesList() {
 
     }
+    private NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
+    IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
 
     @Override
     public void onStart() {
@@ -55,6 +62,8 @@ public class FragmentMoviesList extends Fragment {
         SharedPreferences orderPreff = PreferenceManager.getDefaultSharedPreferences(getActivity());
         String order = orderPreff.getString(PREFERENCE_ORDER_KEY, getString(R.string.popular));
         fetchMovies(order);
+        getActivity().registerReceiver(networkChangeReceiver, filter);
+       // networkChangeReceiver.onReceive(getActivity(),filter);
     }
 
     @Override
@@ -62,7 +71,21 @@ public class FragmentMoviesList extends Fragment {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
+
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+       // outState.putParcelableArrayList("myAdapter", mMovieAdapter);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        getActivity().unregisterReceiver(networkChangeReceiver);
+    }
+
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -84,7 +107,14 @@ public class FragmentMoviesList extends Fragment {
             String top_rated = selectedOrder.getString(PREFERENCE_ORDER_KEY, getString(R.string.top_rated));
             fetchMovies(top_rated);
         }
+        item.setChecked(true);
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.popular).setChecked(true);
+        super.onPrepareOptionsMenu(menu);
     }
 
     private void fetchMovies(String selectedOrder) {
@@ -98,14 +128,14 @@ public class FragmentMoviesList extends Fragment {
     public View onCreateView(final LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_movies_list, container, false);
-       if (!isOnline()){
+        ButterKnife.bind(this, view);
+        if (!isOnline()){
            Toast.makeText(getActivity(),"no internet",Toast.LENGTH_SHORT).show();
        }
 
         mMovieAdapter = new ArrayList<MoviePoster>();
         imageAdapter = new ImageAdapter(getActivity(), mMovieAdapter);
 
-        GridView movieThumbnailView = (GridView) view.findViewById(R.id.grid_view);
         movieThumbnailView.setAdapter(imageAdapter);
         movieThumbnailView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -248,7 +278,7 @@ public class FragmentMoviesList extends Fragment {
             posterPath = movie.getString(MOVIE_POSTER_PATH);
             rating = movie.getString(MOVIE_RATING);
 
-            MoviePoster poster = new MoviePoster(posterPath, movieOverview, title, releaseDate, rating);
+            MoviePoster poster = new MoviePoster(posterPath, movieOverview, title, releaseDate, rating, id);
             movieslist.add(poster);
             Log.v(TAG + "Movies list :", movie.getString(MOVIE_TITLE));
         }
@@ -262,6 +292,22 @@ public class FragmentMoviesList extends Fragment {
                 (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
+    }
+
+    public class NetworkChangeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "Change in Network connectivity");
+            if (intent.getExtras() != null) {
+                if (isOnline()) {
+                    SharedPreferences orderPreff = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                    String order = orderPreff.getString(PREFERENCE_ORDER_KEY, getString(R.string.popular));
+                    fetchMovies(order);
+                }
+                Log.d(TAG, "There's no network connectivity");
+            }
+        }
     }
 }
 
