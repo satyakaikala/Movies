@@ -104,7 +104,10 @@ public class MovieDetailFragment extends Fragment {
             overview.setText("Movie Plot :" + movie.getMovieOverview());
             imagePath = movie.getmposterUrl();
 
-            Picasso.with(context).load(imageBaseUrl + imagePath).noFade().into(posterImage);
+            Picasso.with(context).load(imageBaseUrl + imagePath)
+                    .noFade().placeholder(R.drawable.place_holder_image_1)
+                    .error(R.drawable.error_loading_image)
+                    .into(posterImage);
         }
         return view;
     }

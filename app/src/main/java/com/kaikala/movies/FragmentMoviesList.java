@@ -11,6 +11,7 @@ import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -34,7 +35,6 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -63,21 +63,23 @@ public class FragmentMoviesList extends Fragment {
         String order = orderPreff.getString(PREFERENCE_ORDER_KEY, getString(R.string.popular));
         fetchMovies(order);
         getActivity().registerReceiver(networkChangeReceiver, filter);
-       // networkChangeReceiver.onReceive(getActivity(),filter);
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("myAdapter", (ArrayList<? extends Parcelable>) mMovieAdapter);
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        if (savedInstanceState !=null){
+            mMovieAdapter = (ArrayList<MoviePoster>)savedInstanceState.get("myAdapter");
+        }
         setHasOptionsMenu(true);
 
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-       // outState.putParcelableArrayList("myAdapter", mMovieAdapter);
     }
 
     @Override
@@ -85,7 +87,6 @@ public class FragmentMoviesList extends Fragment {
         super.onStop();
         getActivity().unregisterReceiver(networkChangeReceiver);
     }
-
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
