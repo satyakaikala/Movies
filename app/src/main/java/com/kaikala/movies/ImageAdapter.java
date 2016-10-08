@@ -57,7 +57,12 @@ public class ImageAdapter extends ArrayAdapter<MoviePoster> {
         final String POSTER_SIZE = "w185";
         final String POSTER_URL = POSTER_BASE_URL + POSTER_SIZE + image.getmposterUrl();
         Log.v(TAG, "poster urls :" + POSTER_URL);
-        Picasso.with(context).load(POSTER_URL.trim()).noFade().resize(185 * 2, 270 * 2).into(imageView);
+        Picasso.with(context).load(POSTER_URL.trim())
+                .noFade()
+               // .resize(185 * 2, 270 * 2)
+                .placeholder(R.drawable.place_holder_image_2)
+                .error(R.drawable.error_loading_image)
+                .into(imageView);
         return imageView;
     }
 

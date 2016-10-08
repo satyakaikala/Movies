@@ -49,6 +49,7 @@ public class FragmentMoviesList extends Fragment {
     private static final String PREFERENCE_ORDER_KEY = "preference_order_key";
     @BindView(R.id.grid_view) GridView movieThumbnailView;
     ArrayList<MoviePoster> mMovieAdapter;
+    int index;
 
     public FragmentMoviesList() {
 
@@ -70,6 +71,7 @@ public class FragmentMoviesList extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("myAdapter", (ArrayList<? extends Parcelable>) mMovieAdapter);
+        outState.putInt("position", movieThumbnailView.getFirstVisiblePosition());
     }
 
     @Override
@@ -77,6 +79,9 @@ public class FragmentMoviesList extends Fragment {
         super.onCreate(savedInstanceState);
         if (savedInstanceState !=null){
             mMovieAdapter = (ArrayList<MoviePoster>)savedInstanceState.get("myAdapter");
+            index = savedInstanceState.getInt("position");
+
+
         }
         setHasOptionsMenu(true);
 
@@ -138,6 +143,7 @@ public class FragmentMoviesList extends Fragment {
         imageAdapter = new ImageAdapter(getActivity(), mMovieAdapter);
 
         movieThumbnailView.setAdapter(imageAdapter);
+
         movieThumbnailView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -236,7 +242,7 @@ public class FragmentMoviesList extends Fragment {
                 }
             }
             imageAdapter.notifyDataSetChanged();
-
+            
             Log.v(TAG, "movie results : " + movies);
             super.onPostExecute(movies);
         }

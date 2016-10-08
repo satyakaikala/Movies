@@ -16,12 +16,12 @@
             <TextView
                 android:id="@+id/movie_title"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
+                android:layout_height="@dimen/textViewsize"
                 android:textStyle="bold"
                 android:gravity="center_vertical"
-                android:textSize="25sp"
-                android:background="#00B8D4"
-                android:textColor="#FFFFFF"/>
+                android:textSize="@dimen/text_size_title"
+                android:background="@color/color_title_background"
+                android:textColor="@color/color_text_title"/>
 
 
             <LinearLayout
