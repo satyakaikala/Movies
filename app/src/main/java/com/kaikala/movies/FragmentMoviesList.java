@@ -5,14 +5,11 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -25,9 +22,16 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
+
+import com.kaikala.movies.adapters.MovieTraileBaseAdapter;
+import com.kaikala.movies.adapters.MovieTrailers;
+import com.kaikala.movies.constants.Constants;
+import com.kaikala.movies.data.MovieContract;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +39,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -45,10 +50,12 @@ public class FragmentMoviesList extends Fragment {
 
 
     private static final String TAG = FragmentMoviesList.class.getSimpleName();
-    private ImageAdapter imageAdapter;
-    private static final String PREFERENCE_ORDER_KEY = "preference_order_key";
+    private MoviePosterAdapter moviePosterAdapter;
+    private MovieTraileBaseAdapter movieTrailersAdapter;
+
     @BindView(R.id.grid_view) GridView movieThumbnailView;
     ArrayList<MoviePoster> mMovieAdapter;
+    ArrayList<MovieTrailers> movieTrailers;
     int index;
 
     public FragmentMoviesList() {
@@ -60,8 +67,7 @@ public class FragmentMoviesList extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        SharedPreferences orderPreff = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String order = orderPreff.getString(PREFERENCE_ORDER_KEY, getString(R.string.popular));
+        String order = Constants.getSelectedOrder(getActivity());
         fetchMovies(order);
         getActivity().registerReceiver(networkChangeReceiver, filter);
     }
@@ -70,7 +76,7 @@ public class FragmentMoviesList extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("myAdapter", (ArrayList<? extends Parcelable>) mMovieAdapter);
+        outState.putParcelableArrayList("myAdapter", mMovieAdapter);
         outState.putInt("position", movieThumbnailView.getFirstVisiblePosition());
     }
 
@@ -78,7 +84,7 @@ public class FragmentMoviesList extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (savedInstanceState !=null){
-            mMovieAdapter = (ArrayList<MoviePoster>)savedInstanceState.get("myAdapter");
+            mMovieAdapter = savedInstanceState.getParcelableArrayList("myAdapter");
             index = savedInstanceState.getInt("position");
 
 
@@ -98,28 +104,52 @@ public class FragmentMoviesList extends Fragment {
         inflater.inflate(R.menu.main, menu);
     }
 
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        SharedPreferences selectedOrder = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        if (id == R.id.popular) {
+        String selectedOrder;
+        switch (id){
+            case R.id.popular:
+                selectedOrder = "popular";
+                Constants.setSelectedOrder(getActivity(),selectedOrder);
+                fetchMovies(selectedOrder);
+//                if (item.isChecked()) {
+//                    item.setChecked(false);
+//                }else {
+//                    item.setChecked(true);
+//                }
+                return true;
+            case R.id.topRated:
+                selectedOrder = "top_rated";
+                Constants.setSelectedOrder(getActivity(), selectedOrder);
+                fetchMovies(selectedOrder);
+//                if (item.isChecked()) {
+//                    item.setChecked(false);
+//                }else {
+//                    item.setChecked(true);
+//                }
+               return true;
+            default:
 
-            String popular = selectedOrder.getString(PREFERENCE_ORDER_KEY, getString(R.string.popular));
-            fetchMovies(popular);
+                return super.onOptionsItemSelected(item);
         }
 
-        if (id == R.id.topRated) {
 
-            String top_rated = selectedOrder.getString(PREFERENCE_ORDER_KEY, getString(R.string.top_rated));
-            fetchMovies(top_rated);
-        }
-        item.setChecked(true);
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.popular).setChecked(true);
+        String order = Constants.getSelectedOrder(getActivity());
+        switch (order) {
+            case Constants.POPULAR:
+                menu.findItem(R.id.popular).setChecked(true);
+
+                break;
+            case Constants.TOP_RATED:
+                menu.findItem(R.id.topRated).setChecked(true);
+                break;
+     }
         super.onPrepareOptionsMenu(menu);
     }
 
@@ -138,11 +168,15 @@ public class FragmentMoviesList extends Fragment {
         if (!isOnline()){
            Toast.makeText(getActivity(),"no internet",Toast.LENGTH_SHORT).show();
        }
+        if (savedInstanceState != null){
+            mMovieAdapter = savedInstanceState.getParcelableArrayList("myAdapter");
+        } else {
+            mMovieAdapter = new ArrayList<MoviePoster>();
+        }
+        moviePosterAdapter = new MoviePosterAdapter(getActivity(), mMovieAdapter);
+        movieTrailersAdapter = new MovieTraileBaseAdapter(getActivity(), movieTrailers);
 
-        mMovieAdapter = new ArrayList<MoviePoster>();
-        imageAdapter = new ImageAdapter(getActivity(), mMovieAdapter);
-
-        movieThumbnailView.setAdapter(imageAdapter);
+        movieThumbnailView.setAdapter(moviePosterAdapter);
 
         movieThumbnailView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -151,9 +185,14 @@ public class FragmentMoviesList extends Fragment {
 
                 Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
                 intent.putExtra(Intent.EXTRA_TEXT, mMovieAdapter.get(position));
+               // intent.putExtra(Intent.EXTRA_TEXT, movieTrailers.get(position));
+                intent.putExtra("movieTrailers",movieTrailers);
+
                 startActivity(intent);
             }
         });
+        movieThumbnailView.setVerticalScrollbarPosition(index);
+        movieThumbnailView.setSmoothScrollbarEnabled(true);
         return view;
     }
 
@@ -241,7 +280,7 @@ public class FragmentMoviesList extends Fragment {
                     mMovieAdapter.add(m);
                 }
             }
-            imageAdapter.notifyDataSetChanged();
+            moviePosterAdapter.notifyDataSetChanged();
             
             Log.v(TAG, "movie results : " + movies);
             super.onPostExecute(movies);
@@ -257,12 +296,12 @@ public class FragmentMoviesList extends Fragment {
     private ArrayList<MoviePoster> getMoviePostersFromJson(String movieJsonStr) throws JSONException {
 
         final String RESULTS = "results";
-        final String MOVIE_POSTER_PATH = "poster_path";
-        final String MOVIE_OVERVIEW = "overview";
-        final String MOVIE_RELEASE_DATE = "release_date";
-        final String MOVIE_ID = "id";
-        final String MOVIE_TITLE = "title";
-        final String MOVIE_RATING = "vote_average";
+        final String MOVIE_POSTER_PATH = MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH;
+        final String MOVIE_OVERVIEW = MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW;
+        final String MOVIE_RELEASE_DATE = MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE;
+        final String MOVIE_ID = MovieContract.MovieEntry.COLUMN_MOVIE_ID;
+        final String MOVIE_TITLE = MovieContract.MovieEntry.COLUMN_MOVIE_TITLE;
+        final String MOVIE_RATING = MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_AVERAGE;
 
 
         JSONObject movieJson = new JSONObject(movieJsonStr);
@@ -308,8 +347,7 @@ public class FragmentMoviesList extends Fragment {
             Log.d(TAG, "Change in Network connectivity");
             if (intent.getExtras() != null) {
                 if (isOnline()) {
-                    SharedPreferences orderPreff = PreferenceManager.getDefaultSharedPreferences(getActivity());
-                    String order = orderPreff.getString(PREFERENCE_ORDER_KEY, getString(R.string.popular));
+                    String order = Constants.getSelectedOrder(getContext());
                     fetchMovies(order);
                 }
                 Log.d(TAG, "There's no network connectivity");

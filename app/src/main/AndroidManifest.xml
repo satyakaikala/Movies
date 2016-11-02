@@ -23,7 +23,11 @@
             android:parentActivityName=".MainActivity">
         </activity>
 
+    <provider
+        android:authorities="com.kaikala.movies"
+        android:name=".data.MovieProvider">
 
+    </provider>
     </application>
 
 </manifest>

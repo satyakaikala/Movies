@@ -14,12 +14,12 @@ import java.util.ArrayList;
 /**
  * Created by kaIkala on 8/18/2016.
  */
-public class ImageAdapter extends ArrayAdapter<MoviePoster> {
-    private final String TAG = ImageAdapter.class.getSimpleName();
+public class MoviePosterAdapter extends ArrayAdapter<MoviePoster> {
+    private final String TAG = MoviePosterAdapter.class.getSimpleName();
     private Context context;
     ArrayList<MoviePoster> moviePosters = new ArrayList<>();
 
-    public ImageAdapter(Context ctx, ArrayList<MoviePoster> posters) {
+    public MoviePosterAdapter(Context ctx, ArrayList<MoviePoster> posters) {
         super(ctx, 0, posters);
 
         context = ctx;

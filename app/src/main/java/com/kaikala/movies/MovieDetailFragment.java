@@ -15,10 +15,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.kaikala.movies.adapters.MovieTraileBaseAdapter;
+import com.kaikala.movies.adapters.MovieTrailers;
+import com.kaikala.movies.operations.FetchMovieTrailer;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,7 +32,7 @@ import butterknife.ButterKnife;
 /**
  * Created by kaIkala on 8/24/2016.
  */
-public class MovieDetailFragment extends Fragment {
+public class MovieDetailFragment extends Fragment implements FetchMovieTrailer.TrailerFetchCompleted {
 
     @BindView(R.id.movie_title)
     TextView title;
@@ -42,14 +48,23 @@ public class MovieDetailFragment extends Fragment {
     View separator;
     @BindView(R.id.movie_poster)
     ImageView posterImage;
+    @BindView(R.id.trailerText)
+    TextView trailerText;
+    @BindView(R.id.trailerSeparator)
+    View trailerSeperator;
+     @BindView(R.id.trailers_info)
+     ListView trailers_info;
 
-    MoviePoster movie;
+
+    private MoviePoster movie;
+    private MovieTrailers trailersList;
+    FetchMovieTrailer fetchMovieTrailer;
+
+    private ArrayList<MovieTrailers> trailersArrayList;
+    private MovieTraileBaseAdapter trailersAdapter;
+
     private static final String TAG = MovieDetailFragment.class.getSimpleName();
     Context context;
-
-    public MovieDetailFragment() {
-    }
-
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,7 +106,10 @@ public class MovieDetailFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_movie_detail, container, false);
         ButterKnife.bind(this, view);
         Intent movieData = getActivity().getIntent();
+        trailersArrayList=new ArrayList<>();
         movie = movieData.getExtras().getParcelable(Intent.EXTRA_TEXT);
+//        trailersList = movieData.getExtras().getParcelable(Intent.EXTRA_TEXT);
+
         if (movie != null && movieData.hasExtra(Intent.EXTRA_TEXT)) {
             String imagePath, imageBaseUrl;
             imagePath = null;
@@ -109,7 +127,23 @@ public class MovieDetailFragment extends Fragment {
                     .error(R.drawable.error_loading_image)
                     .into(posterImage);
         }
+        updateTrailers();
+
+
         return view;
     }
 
+    public void updateTrailers(){
+        fetchMovieTrailer = new FetchMovieTrailer(this);
+        fetchMovieTrailer.execute(movie.getmId());
+        Log.d(TAG, "trailer fetch completed");
+    }
+    @Override
+    public void trailerFetchCompleted(ArrayList<MovieTrailers> list) {
+        if (list != null && list.size() > 0){
+            trailersArrayList.clear();
+            trailersArrayList.addAll(list);
+            trailers_info.setAdapter(new MovieTraileBaseAdapter(getContext(),trailersArrayList));
+        }
+    }
 }

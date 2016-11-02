@@ -1,7 +1,9 @@
 package com.kaikala.movies;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+
+import com.facebook.stetho.Stetho;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -13,5 +15,12 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction().add(R.id.container, new FragmentMoviesList()).commit();
         }
 
+        Stetho.initialize(
+                Stetho.newInitializerBuilder(this)
+                        .enableDumpapp(
+                                Stetho.defaultDumperPluginsProvider(this))
+                        .enableWebKitInspector(
+                                Stetho.defaultInspectorModulesProvider(this))
+                        .build());
     }
 }
