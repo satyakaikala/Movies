@@ -1,9 +1,11 @@
-package com.kaikala.movies;
+package com.kaikala.movies.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.facebook.stetho.Stetho;
+import com.kaikala.movies.fragments.FragmentMoviesList;
+import com.kaikala.movies.R;
 
 public class MainActivity extends AppCompatActivity {
 

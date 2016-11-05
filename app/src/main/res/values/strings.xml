@@ -2,5 +2,13 @@
     <string name="app_name">Movies</string>
     <string name="top_rated">top_rated</string>
     <string name="popular">popular</string>
+    <string name="favorite">favorite</string>
+    <string name="movie_title_text">Movie Title</string>
+    <string name="movie_releaseDate">Release Date</string>
+    <string name="movie_ratting">Rating</string>
+    <string name="movie_plot">Movie Plot</string>
+    <string name="poster_base_url">http://image.tmdb.org/t/p/w500/</string>
+    <string name="reviewsText_title">Reviews:</string>
+    <string name="trailersText_title">Trailers:</string>
 
 </resources>

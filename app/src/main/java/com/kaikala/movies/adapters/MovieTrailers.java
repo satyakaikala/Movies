@@ -57,6 +57,7 @@ public class MovieTrailers implements Parcelable {
     public String getTrailerImageUrl(){
         return BASE_TRAILER_IMAGE_URL + key + IMAGE_EXTRAS;
     }
+
     protected MovieTrailers(Parcel in) {
         id = in.readString();
         key = in.readString();

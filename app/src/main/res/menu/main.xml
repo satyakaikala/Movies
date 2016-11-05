@@ -11,6 +11,11 @@
             android:orderInCategory="100"
             android:title="Popular"
             app:showAsAction="never" />
+        <item
+            android:id="@+id/favoirte"
+            android:orderInCategory="100"
+            android:title="Favorite"
+            app:showAsAction="never" />
 
     </group>
 

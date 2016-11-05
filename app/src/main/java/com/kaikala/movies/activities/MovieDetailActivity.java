@@ -1,7 +1,10 @@
-package com.kaikala.movies;
+package com.kaikala.movies.activities;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.kaikala.movies.fragments.MovieDetailFragment;
+import com.kaikala.movies.R;
 
 public class MovieDetailActivity extends AppCompatActivity {
 

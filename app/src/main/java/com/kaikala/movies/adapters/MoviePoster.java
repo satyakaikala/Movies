@@ -1,4 +1,4 @@
-package com.kaikala.movies;
+package com.kaikala.movies.adapters;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,6 +14,7 @@ public class MoviePoster implements Parcelable{
     private String movieOverview;
     private String releaseDate;
     private String mId;
+    private String isFav;
 
     public MoviePoster(String posterUrl, String overview, String title, String release, String rating, String id) {
         mTitle = title;
@@ -32,6 +33,7 @@ public class MoviePoster implements Parcelable{
         movieOverview = in.readString();
         releaseDate = in.readString();
         mId = in.readString();
+        isFav = in.readString();
     }
 
     public static final Creator<MoviePoster> CREATOR = new Creator<MoviePoster>() {
@@ -59,6 +61,7 @@ public class MoviePoster implements Parcelable{
         dest.writeString(movieOverview);
         dest.writeString(releaseDate);
         dest.writeString(mId);
+        dest.writeString(isFav);
     }
 
     public String getmTitle() {
@@ -85,5 +88,9 @@ public class MoviePoster implements Parcelable{
 
     public String getmId(){
         return mId;
+    }
+
+    public String getIsFav(){
+        return isFav;
     }
 }

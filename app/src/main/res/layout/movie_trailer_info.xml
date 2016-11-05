@@ -1,15 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="?android:attr/listPreferredItemHeight">
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/trailer_image"/>
+        android:id="@+id/trailer_image"
+android:layout_marginTop="3dp"
+        android:layout_alignParentLeft="true"
+        />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/movie_trailer_name"/>
-</LinearLayout>
+        android:id="@+id/movie_trailer_name"
+        android:paddingLeft="16dp"
+        android:layout_marginTop="3dp"
+        android:gravity="center_horizontal"
+        android:layout_toRightOf="@id/trailer_image"
+
+        />
+</RelativeLayout>

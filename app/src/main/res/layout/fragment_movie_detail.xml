@@ -6,7 +6,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
@@ -18,11 +18,11 @@
                 android:id="@+id/movie_title"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/textViewsize"
-                android:textStyle="bold"
-                android:gravity="center_vertical"
-                android:textSize="@dimen/text_size_title"
                 android:background="@color/color_title_background"
-                android:textColor="@color/color_text_title"/>
+                android:gravity="center_vertical"
+                android:textColor="@color/color_text_title"
+                android:textSize="@dimen/text_size_title"
+                android:textStyle="bold" />
 
 
             <LinearLayout
@@ -59,16 +59,24 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textStyle="italic" />
+
                     <RatingBar
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:id="@+id/movieRating"
                         style="?android:attr/ratingBarStyleSmall"
-                        android:numStars="10"
-                        android:stepSize="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:clickable="false"
-                        android:max="10"/>
+                        android:max="10"
+                        android:numStars="10"
+                        android:stepSize="1" />
 
+                    <ImageButton
+                        android:id="@+id/favorite_button"
+                        style="@style/FavoriteButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:tint="@color/colorAccent"
+                        android:contentDescription="@string/favorite"/>
                 </LinearLayout>
 
             </LinearLayout>
@@ -83,7 +91,8 @@
                 android:id="@+id/separator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@android:color/background_dark" />
+                android:background="@android:color/background_dark"
+                android:paddingBottom="5dp"/>
 
         </LinearLayout>
 
@@ -91,24 +100,55 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
             <TextView
+                android:id="@+id/trailerText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/trailerText"
-                android:text="Trailers:"/>
+                android:text="@string/trailersText_title" />
         </LinearLayout>
 
-<ListView
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/trailers_info">
+        <ListView
+            android:id="@+id/trailers_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-</ListView>
+        </ListView>
 
         <View
             android:id="@+id/trailerSeparator"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/background_dark" />
+            android:background="@android:color/background_dark"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/reviewsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/reviewsText_title" />
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/reviews_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </ListView>
+
+        <View
+            android:id="@+id/reviewSeparator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@android:color/background_dark"
+            android:paddingTop="5dp"/>
     </LinearLayout>
+
+
 </ScrollView>

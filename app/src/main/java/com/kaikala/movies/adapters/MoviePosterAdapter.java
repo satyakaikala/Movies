@@ -1,4 +1,4 @@
-package com.kaikala.movies;
+package com.kaikala.movies.adapters;
 
 import android.content.Context;
 import android.util.Log;
@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import com.kaikala.movies.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
