@@ -3,6 +3,8 @@ package com.kaikala.movies.adapters;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.kaikala.movies.constants.Constants;
+
 /**
  * Created by kaikala on 10/9/16.
  */
@@ -16,12 +18,7 @@ public class MovieTrailers implements Parcelable {
     private String type;
     private String site;
 
-    public static final String BASE_TRAILER_URL = "http://www.youtube.com/watch?v=";
-    public static final String BASE_TRAILER_IMAGE_URL = "http://img.youtube.com/vi/";
-    public static final String IMAGE_EXTRAS = "/0.jpg";
-
-
-    public MovieTrailers(String id, String key, String name, String size, String site){
+    public MovieTrailers (String id, String key, String name, String size, String site) {
         this.id = id;
         this.key = key;
         this.name = name;
@@ -51,11 +48,11 @@ public class MovieTrailers implements Parcelable {
     }
 
     public String getrailerUrl(){
-        return BASE_TRAILER_URL + key;
+        return Constants.BASE_TRAILER_URL + key;
     }
 
     public String getTrailerImageUrl(){
-        return BASE_TRAILER_IMAGE_URL + key + IMAGE_EXTRAS;
+        return Constants.BASE_TRAILER_IMAGE_URL + key + Constants.IMAGE_EXTRAS;
     }
 
     protected MovieTrailers(Parcel in) {

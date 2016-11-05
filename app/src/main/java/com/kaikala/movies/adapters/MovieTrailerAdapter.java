@@ -20,13 +20,13 @@ import java.util.ArrayList;
  * Created by Kaikala on 10/23/16.
  */
 
-public class MovieTraileBaseAdapter extends BaseAdapter {
+public class MovieTrailerAdapter extends BaseAdapter {
 
     private ArrayList<MovieTrailers> movieTrailersList;
     private Context context;
     private LayoutInflater layoutInflater;
 
-    public MovieTraileBaseAdapter (Context context, ArrayList<MovieTrailers> movieTrailersList) {
+    public MovieTrailerAdapter(Context context, ArrayList<MovieTrailers> movieTrailersList) {
         this.context=context;
         this.movieTrailersList=movieTrailersList;
         layoutInflater=(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

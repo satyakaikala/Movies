@@ -23,12 +23,12 @@ import android.widget.Toast;
 
 import com.kaikala.movies.adapters.MoviePoster;
 import com.kaikala.movies.R;
-import com.kaikala.movies.adapters.MovieReviewBaseAdapter;
+import com.kaikala.movies.adapters.MovieReviewAdapter;
 import com.kaikala.movies.adapters.MovieReviews;
-import com.kaikala.movies.adapters.MovieTraileBaseAdapter;
+import com.kaikala.movies.adapters.MovieTrailerAdapter;
 import com.kaikala.movies.adapters.MovieTrailers;
 import com.kaikala.movies.data.MovieContract;
-import com.kaikala.movies.operations.FetchMovieTrailer;
+import com.kaikala.movies.operations.FetchTrailers;
 import com.kaikala.movies.operations.FetchReviews;
 import com.squareup.picasso.Picasso;
 
@@ -40,7 +40,7 @@ import butterknife.ButterKnife;
 /**
  * Created by kaIkala on 8/24/2016.
  */
-public class MovieDetailFragment extends Fragment implements FetchMovieTrailer.TrailerFetchCompleted, FetchReviews.ReviewFetchCompleted {
+public class MovieDetailFragment extends Fragment implements FetchTrailers.TrailerFetchCompleted, FetchReviews.ReviewFetchCompleted {
 
     @BindView(R.id.movie_title)
     TextView title;
@@ -177,7 +177,7 @@ public class MovieDetailFragment extends Fragment implements FetchMovieTrailer.T
     }
 
     public void updateTrailers(){
-        FetchMovieTrailer fetchMovieTrailer = new FetchMovieTrailer(this);
+        FetchTrailers fetchMovieTrailer = new FetchTrailers(this);
         fetchMovieTrailer.execute(movie.getmId());
         Log.d(TAG, "trailer fetch completed");
     }
@@ -193,7 +193,7 @@ public class MovieDetailFragment extends Fragment implements FetchMovieTrailer.T
         if (list != null && list.size() > 0){
             trailersArrayList.clear();
             trailersArrayList.addAll(list);
-            trailersInfo.setAdapter(new MovieTraileBaseAdapter(getContext(),trailersArrayList));
+            trailersInfo.setAdapter(new MovieTrailerAdapter(getContext(),trailersArrayList));
         }
     }
 
@@ -202,7 +202,7 @@ public class MovieDetailFragment extends Fragment implements FetchMovieTrailer.T
         if (list != null && list.size() > 0) {
             reviewsArrayList.clear();
             reviewsArrayList.addAll(list);
-            reviewsInfo.setAdapter(new MovieReviewBaseAdapter(getContext(), reviewsArrayList));
+            reviewsInfo.setAdapter(new MovieReviewAdapter(getContext(), reviewsArrayList));
         }
     }
 }

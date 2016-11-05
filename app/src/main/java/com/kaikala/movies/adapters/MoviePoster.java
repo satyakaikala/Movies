@@ -90,7 +90,4 @@ public class MoviePoster implements Parcelable{
         return mId;
     }
 
-    public String getIsFav(){
-        return isFav;
-    }
 }
