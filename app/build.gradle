@@ -6,11 +6,12 @@ android {
 
     defaultConfig {
         applicationId "com.kaikala.movies"
-        minSdkVersion 14
+        minSdkVersion 19
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -20,6 +21,16 @@ android {
             it.buildConfigField 'String', 'API_KEY', '"d37d289fc8a6ecc38b01e7b306e1665b"'
         }
     }
+
+//    productFlavors {
+//        free {
+//            applicationId 'com.kaikala.movies.flavors.free'
+//        }
+//
+//        paid {
+//            applicationId 'com.kaikala.movies.flavors.paid'
+//        }
+//    }
 }
 
 

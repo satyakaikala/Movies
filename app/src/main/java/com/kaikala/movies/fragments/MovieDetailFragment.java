@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -133,6 +134,7 @@ public class MovieDetailFragment extends Fragment implements FetchTrailers.Trail
                     .error(R.drawable.error_loading_image)
                     .into(posterImage);
         }
+
         isFavorite = isFavorite();
         favButton.setSelected(isFavorite);
         favButton.setOnClickListener(new View.OnClickListener() {

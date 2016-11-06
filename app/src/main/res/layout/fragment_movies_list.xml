@@ -3,16 +3,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<GridView
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:id="@+id/grid_view"
-    android:columnWidth="90dp"
-    android:stretchMode="columnWidth"
-    android:numColumns="2"
-    android:verticalSpacing="0dp"
-    android:horizontalSpacing="0dp"
-    android:gravity="center">
+    <GridView
+        android:id="@+id/grid_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:columnWidth="90dp"
+        android:gravity="center"
+        android:horizontalSpacing="0dp"
+        android:numColumns="2"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="0dp">
+    </GridView>
 
-</GridView>
 </FrameLayout>

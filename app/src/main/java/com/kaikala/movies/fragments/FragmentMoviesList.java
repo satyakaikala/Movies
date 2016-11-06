@@ -1,7 +1,6 @@
 package com.kaikala.movies.fragments;
 
 
-import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -9,8 +8,6 @@ import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,15 +22,12 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import com.kaikala.movies.adapters.MoviePoster;
-import com.kaikala.movies.adapters.MoviePosterAdapter;
 import com.kaikala.movies.R;
 import com.kaikala.movies.activities.MovieDetailActivity;
-import com.kaikala.movies.adapters.MovieReviews;
-import com.kaikala.movies.adapters.MovieTrailers;
+import com.kaikala.movies.adapters.MoviePoster;
+import com.kaikala.movies.adapters.MoviePosterAdapter;
 import com.kaikala.movies.constants.Constants;
 import com.kaikala.movies.data.MovieContract;
-import com.kaikala.movies.data.MovieProvider;
 import com.kaikala.movies.operations.FetchPosters;
 
 import java.util.ArrayList;
@@ -118,6 +112,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
                 return true;
             case R.id.favoirte:
                 selectedOrder = Constants.FAVORITE;
+                Constants.setSelectedOrder(getActivity(), selectedOrder);
                 fetchMovies(selectedOrder);
                 return true;
             default:
@@ -142,14 +137,35 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
         super.onPrepareOptionsMenu(menu);
     }
 
-    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-    public  void fetchMovies(String selectedOrder) {
+    public void fetchMovies(String selectedOrder) {
         if (selectedOrder.equals(Constants.FAVORITE)) {
 
+            getFavoriteCollection();
+            movieThumbnailView.setAdapter(moviePosterAdapter);
         } else {
             FetchPosters fetchMovies = new FetchPosters(this);
             fetchMovies.execute(selectedOrder);
         }
+    }
+
+    public ArrayList<MoviePoster> getFavoriteCollection() {
+        moviePosters = new ArrayList<>();
+        Cursor cursor = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.MOVIE_COLUMNS,
+                null, null, null);
+        if (cursor.moveToFirst()) {
+            do {
+                MoviePoster poster = new MoviePoster();
+                poster.setmId(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_ID));
+                poster.setmTitle(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_TITLE));
+                poster.setMposterUrl(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_POSTER_PATH));
+                poster.setMovieOverview(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_OVERVIEW));
+                poster.setMrating(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_VOTE_AVERAGE));
+                poster.setReleaseDate(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_RELEASE_DATE));
+                moviePosters.add(poster);
+            } while (cursor.moveToNext());
+        }
+        Log.d(TAG, "cursor values : " + cursor);
+        return moviePosters;
     }
 
     @Nullable
@@ -187,7 +203,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
 
     @Override
     public void posterFetchCompleted(ArrayList<MoviePoster> list) {
-        if (list != null && list.size() > 0){
+        if (list != null && list.size() > 0) {
             moviePosters.clear();
             moviePosters.addAll(list);
         }

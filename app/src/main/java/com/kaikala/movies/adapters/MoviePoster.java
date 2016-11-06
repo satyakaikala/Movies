@@ -16,6 +16,10 @@ public class MoviePoster implements Parcelable{
     private String mId;
     private String isFav;
 
+    public MoviePoster(){
+
+    }
+
     public MoviePoster(String posterUrl, String overview, String title, String release, String rating, String id) {
         mTitle = title;
         mposterUrl = posterUrl;
@@ -90,4 +94,27 @@ public class MoviePoster implements Parcelable{
         return mId;
     }
 
+    public void setmId(String mId) {
+        this.mId = mId;
+    }
+
+    public void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
+    }
+
+    public void setMovieOverview(String movieOverview) {
+        this.movieOverview = movieOverview;
+    }
+
+    public void setMposterUrl(String mposterUrl) {
+        this.mposterUrl = mposterUrl;
+    }
+
+    public void setMrating(String mrating) {
+        this.mrating = mrating;
+    }
+
+    public void setmTitle(String mTitle) {
+        this.mTitle = mTitle;
+    }
 }
