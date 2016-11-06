@@ -50,8 +50,6 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
     private static final String TAG = FragmentMoviesList.class.getSimpleName();
     private MoviePosterAdapter moviePosterAdapter;
     private ArrayList<MoviePoster> moviePosters;
-    private ArrayList<MovieTrailers> movieTrailers;
-    private ArrayList<MovieReviews> movieReviews;
     private static int index;
 
     @BindView(R.id.grid_view)
@@ -119,6 +117,8 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
                 fetchMovies(selectedOrder);
                 return true;
             case R.id.favoirte:
+                selectedOrder = Constants.FAVORITE;
+                fetchMovies(selectedOrder);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -136,6 +136,8 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
             case Constants.TOP_RATED:
                 menu.findItem(R.id.topRated).setChecked(true);
                 break;
+            case Constants.FAVORITE:
+                menu.findItem(R.id.favoirte).setChecked(true);
         }
         super.onPrepareOptionsMenu(menu);
     }
@@ -143,9 +145,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public  void fetchMovies(String selectedOrder) {
         if (selectedOrder.equals(Constants.FAVORITE)) {
-            Uri uri = MovieContract.MovieEntry.CONTENT_URI;
-            MovieProvider movieProvider = new MovieProvider();
-            Cursor cursor = movieProvider.query(uri, new String[]{MovieContract.MovieEntry.COLUMN_MOVIE_ID}, "movies", new String[]{"is_favorite=true"}, null, null);
+
         } else {
             FetchPosters fetchMovies = new FetchPosters(this);
             fetchMovies.execute(selectedOrder);
@@ -177,8 +177,6 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
 
                 Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
                 intent.putExtra(Intent.EXTRA_TEXT, moviePosters.get(position));
-                intent.putExtra(Constants.MOVIE_TRAILERS, movieTrailers);
-                intent.putExtra(Constants.MOVIE_REVIEWS, movieReviews);
                 startActivity(intent);
             }
         });

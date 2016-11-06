@@ -4,7 +4,10 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.kaikala.movies.R;
@@ -54,6 +57,9 @@ public class MovieReviewAdapter extends BaseAdapter {
         reviewsHolder.reviewContent = (TextView) reviewRow.findViewById(R.id.reviewContent);
         reviewsHolder.authorText.setText(movieReviewsList.get(position).getReviewAuthor());
         reviewsHolder.reviewContent.setText(movieReviewsList.get(position).getReviewContent());
+        reviewsHolder.view = (View)reviewRow.findViewById(R.id.seperatorReviews);
+        reviewsHolder.readMore = (TextView)reviewRow.findViewById(R.id.readMore);
+
         return reviewRow;
     }
 
@@ -61,5 +67,7 @@ public class MovieReviewAdapter extends BaseAdapter {
 
         TextView authorText;
         TextView reviewContent;
+        View view;
+        TextView readMore;
     }
 }

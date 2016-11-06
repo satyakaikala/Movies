@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -64,8 +67,6 @@ public class MovieDetailFragment extends Fragment implements FetchTrailers.Trail
     ListView trailersInfo;
     @BindView(R.id.favorite_button)
     ImageButton favButton;
-    @BindView(R.id.reviewSeparator)
-    View reviewSeperator;
     @BindView(R.id.reviews_info)
     ListView reviewsInfo;
 
@@ -120,7 +121,7 @@ public class MovieDetailFragment extends Fragment implements FetchTrailers.Trail
             String imageBaseUrl;
             imageBaseUrl = getString(R.string.poster_base_url);
 
-            title.setText(getString(R.string.movie_title_text)+" :" + movie.getmTitle());
+            title.setText(movie.getmTitle());
             releaseDate.setText(getString(R.string.movie_releaseDate)+" :" + (movie.getReleaseDate()).substring(0, 4));
             rating.setText(getString(R.string.movie_ratting)+" : " + (movie.getmrating()) + "/10");
             ratingBar.setRating(Float.valueOf(movie.getmrating()));
