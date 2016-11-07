@@ -14,7 +14,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction().add(R.id.container, new FragmentMoviesList()).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_poster_list, new FragmentMoviesList()).commit();
         }
 
         Stetho.initialize(
