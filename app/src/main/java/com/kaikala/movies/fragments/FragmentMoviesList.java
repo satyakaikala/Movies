@@ -140,9 +140,11 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
     public void fetchMovies(String selectedOrder) {
         if (selectedOrder.equals(Constants.FAVORITE)) {
 
-            getFavoriteCollection();
+            moviePosters=getFavoriteCollection();
+            moviePosterAdapter = new MoviePosterAdapter(getActivity(), moviePosters);
+
             movieThumbnailView.setAdapter(moviePosterAdapter);
-        } else {
+            } else {
             FetchPosters fetchMovies = new FetchPosters(this);
             fetchMovies.execute(selectedOrder);
         }
@@ -161,6 +163,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
                 poster.setMovieOverview(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_OVERVIEW));
                 poster.setMrating(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_VOTE_AVERAGE));
                 poster.setReleaseDate(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_RELEASE_DATE));
+                Log.d(TAG, "poster values : " + poster);
                 moviePosters.add(poster);
             } while (cursor.moveToNext());
         }

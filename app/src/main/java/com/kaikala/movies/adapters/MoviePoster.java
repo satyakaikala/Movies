@@ -117,4 +117,17 @@ public class MoviePoster implements Parcelable{
     public void setmTitle(String mTitle) {
         this.mTitle = mTitle;
     }
+
+    @Override
+    public String toString() {
+        return "MoviePoster{" +
+                "mTitle='" + mTitle + '\'' +
+                ", mrating='" + mrating + '\'' +
+                ", mposterUrl='" + mposterUrl + '\'' +
+                ", movieOverview='" + movieOverview + '\'' +
+                ", releaseDate='" + releaseDate + '\'' +
+                ", mId='" + mId + '\'' +
+                ", isFav='" + isFav + '\'' +
+                '}';
+    }
 }

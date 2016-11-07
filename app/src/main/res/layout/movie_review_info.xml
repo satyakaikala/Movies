@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/listPreferredItemHeight">
+
+    <TextView
+        android:id="@+id/reviewAuthor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="6dp"
+        tools:ignore="RtlCompat" />
+
+    <TextView
+        android:id="@+id/reviewContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/reviewAuthor"
+        android:layout_marginLeft="4dp"
+        android:maxLines="4"
+        tools:ignore="RtlCompat" />
+
+    <TextView
+        android:id="@+id/readMore"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/reviewContent"
+        android:clickable="true"
+        android:text="Read More" />
+
+    <View
+        android:id="@+id/seperatorReviews"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_alignTop="@+id/readMore"
+        android:layout_marginLeft="100dp"
+        android:layout_marginStart="100dp"
+        android:layout_toLeftOf="@+id/readMore"
+        android:layout_toStartOf="@+id/readMore"
+        android:background="#000"
+        android:paddingEnd="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="20dp" />
+
+</RelativeLayout>

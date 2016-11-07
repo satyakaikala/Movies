@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.facebook.stetho.Stetho;
 import com.kaikala.movies.fragments.FragmentMoviesList;
 import com.kaikala.movies.R;
+import com.kaikala.movies.fragments.MovieDetailFragment;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,6 +16,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null){
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_poster_list, new FragmentMoviesList()).commit();
+
+            if (findViewById(R.id.fragment_poster_detail) != null) {
+               getSupportFragmentManager().beginTransaction().add(R.id.fragment_poster_detail, new MovieDetailFragment());
+            }
         }
 
         Stetho.initialize(
