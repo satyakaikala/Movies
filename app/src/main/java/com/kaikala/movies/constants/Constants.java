@@ -57,45 +57,4 @@ public class Constants {
         editor.putString("", order);
         editor.apply();
     }
-
-    public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
-    public class NetworkChangeReceiver extends BroadcastReceiver implements FetchPosters.PostersFetchCompleted {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Log.d(TAG, "Change in Network connectivity");
-            if (intent.getExtras() != null) {
-                if (isOnline()) {
-                    String order = Constants.getSelectedOrder(context);
-                    FetchPosters fetchMovies = new FetchPosters(this);
-                    fetchMovies.execute(order);
-                }
-                Log.d(TAG, "There's no network connectivity");
-            }
-        }
-
-        @Override
-        public void posterFetchCompleted(ArrayList<MoviePoster> list) {
-            /**
-             * override method
-             */
-        }
-    }
-
-    public static boolean isTablet(Context context){
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getBoolean(TABLET, false);
-    }
-
-    public static void setTablet(Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        preferences.edit().putBoolean(TABLET, true).apply();
-    }
-
 }
