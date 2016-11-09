@@ -113,7 +113,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
             case R.id.favoirte:
                 selectedOrder = Constants.FAVORITE;
                 Constants.setSelectedOrder(getActivity(), selectedOrder);
-                fetchMovies(selectedOrder);
+                fetchFavoriteCollection();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -126,28 +126,26 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
         switch (order) {
             case Constants.POPULAR:
                 menu.findItem(R.id.popular).setChecked(true);
-
                 break;
             case Constants.TOP_RATED:
                 menu.findItem(R.id.topRated).setChecked(true);
                 break;
             case Constants.FAVORITE:
                 menu.findItem(R.id.favoirte).setChecked(true);
+                break;
         }
         super.onPrepareOptionsMenu(menu);
     }
 
+    public void fetchFavoriteCollection(){
+        moviePosters = getFavoriteCollection();
+        moviePosterAdapter = new MoviePosterAdapter(getActivity(), moviePosters);
+        movieThumbnailView.setAdapter(moviePosterAdapter);
+    }
+
     public void fetchMovies(String selectedOrder) {
-        if (selectedOrder.equals(Constants.FAVORITE)) {
-
-            moviePosters=getFavoriteCollection();
-            moviePosterAdapter = new MoviePosterAdapter(getActivity(), moviePosters);
-
-            movieThumbnailView.setAdapter(moviePosterAdapter);
-            } else {
             FetchPosters fetchMovies = new FetchPosters(this);
             fetchMovies.execute(selectedOrder);
-        }
     }
 
     public ArrayList<MoviePoster> getFavoriteCollection() {
