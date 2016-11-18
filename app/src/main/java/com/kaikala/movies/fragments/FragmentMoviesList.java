@@ -141,6 +141,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
         moviePosters = getFavoriteCollection();
         moviePosterAdapter = new MoviePosterAdapter(getActivity(), moviePosters);
         movieThumbnailView.setAdapter(moviePosterAdapter);
+        moviePosterAdapter.notifyDataSetChanged();
     }
 
     public void fetchMovies(String selectedOrder) {
@@ -148,16 +149,23 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
             fetchMovies.execute(selectedOrder);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchFavoriteCollection();
+    }
+
     public ArrayList<MoviePoster> getFavoriteCollection() {
         moviePosters = new ArrayList<>();
-        Cursor cursor = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI, MovieContract.MovieEntry.MOVIE_COLUMNS,
+        Cursor cursor = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
+                MovieContract.MovieEntry.MOVIE_COLUMNS,
                 null, null, null);
         if (cursor.moveToFirst()) {
             do {
                 MoviePoster poster = new MoviePoster();
                 poster.setmId(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_ID));
                 poster.setmTitle(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_TITLE));
-                poster.setMposterUrl(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_POSTER_PATH));
+                 poster.setMposterUrl(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_POSTER_PATH));
                 poster.setMovieOverview(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_OVERVIEW));
                 poster.setMrating(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_VOTE_AVERAGE));
                 poster.setReleaseDate(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_RELEASE_DATE));
