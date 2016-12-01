@@ -76,8 +76,6 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
         if (savedInstanceState != null) {
             moviePosters = savedInstanceState.getParcelableArrayList(Constants.MOVIE_POSTERS);
             index = savedInstanceState.getInt(Constants.SCROLL_POSITION);
-
-
         }
         setHasOptionsMenu(true);
 
@@ -199,6 +197,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(getActivity(), "pressed item is" + position, Toast.LENGTH_LONG).show();
+
 
                 Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
                 intent.putExtra(Intent.EXTRA_TEXT, moviePosters.get(position));
