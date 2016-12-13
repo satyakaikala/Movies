@@ -115,9 +115,11 @@ public class FetchTrailers extends AsyncTask<String, Void, ArrayList<MovieTraile
     @Override
     protected void onPostExecute(ArrayList<MovieTrailers> movieTrailerses) {
         super.onPostExecute(movieTrailerses);
-        fetchCompleted.trailerFetchCompleted(movieTrailerses);
-        for (MovieTrailers t : movieTrailerses){
-            Log.d(TAG, "Trailers:" + " " + movieTrailerses);
+        if (movieTrailerses != null) {
+            fetchCompleted.trailerFetchCompleted(movieTrailerses);
+                for (MovieTrailers t : movieTrailerses) {
+                    Log.d(TAG, "Trailers:" + " " + movieTrailerses);
+                }
         }
     }
 

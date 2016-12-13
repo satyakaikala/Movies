@@ -181,7 +181,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
 
         View view = inflater.inflate(R.layout.fragment_movies_list, container, false);
         ButterKnife.bind(this, view);
-        if (!isOnline()) {
+        if (!Constants.isOnline(getContext())) {
             Toast.makeText(getActivity(), "no internet", Toast.LENGTH_SHORT).show();
         }
         if (savedInstanceState != null) {
@@ -218,20 +218,13 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
         moviePosterAdapter.notifyDataSetChanged();
     }
 
-    public boolean isOnline() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        return netInfo != null && netInfo.isConnectedOrConnecting();
-    }
-
     public class NetworkChangeReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.d(TAG, "Change in Network connectivity");
             if (intent.getExtras() != null) {
-                if (isOnline()) {
+                if (Constants.isOnline(getContext())) {
                     String order = Constants.getSelectedOrder(getContext());
                     fetchMovies(order);
                 }
