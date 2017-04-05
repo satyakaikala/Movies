@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,9 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -97,8 +93,8 @@ public class MovieDetailFragment extends Fragment implements FetchTrailers.Trail
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
         shareIntent.setType("text/plain");
-        String movieTitle = movie.getmTitle();
-        String rating = movie.getmrating();
+        String movieTitle = movie.getTitle();
+        String rating = movie.getRating();
         String msg = "Hey there ! How about a movie plan, I am likely to watch" + " " + "'" + movieTitle + "'" + " " + "has rating" + " " + rating;
 
         shareIntent.putExtra(Intent.EXTRA_TEXT, msg);
@@ -122,12 +118,12 @@ public class MovieDetailFragment extends Fragment implements FetchTrailers.Trail
             String imageBaseUrl;
             imageBaseUrl = getString(R.string.poster_base_url);
 
-            title.setText(movie.getmTitle());
+            title.setText(movie.getTitle());
             releaseDate.setText(getString(R.string.movie_releaseDate)+" :" + (movie.getReleaseDate()).substring(0, 4));
-            rating.setText(getString(R.string.movie_ratting)+" : " + (movie.getmrating()) + "/10");
-            ratingBar.setRating(Float.valueOf(movie.getmrating()));
+            rating.setText(getString(R.string.movie_ratting)+" : " + (movie.getRating()) + "/10");
+            ratingBar.setRating(Float.valueOf(movie.getRating()));
             overview.setText(getString(R.string.movie_plot)+" :" + movie.getMovieOverview());
-            imagePath = movie.getmposterUrl();
+            imagePath = movie.getPosterUrl();
 
             Picasso.with(context).load(imageBaseUrl + imagePath)
                     .noFade().placeholder(R.drawable.place_holder_image_1)
@@ -142,23 +138,23 @@ public class MovieDetailFragment extends Fragment implements FetchTrailers.Trail
             public void onClick(View v) {
                 ContentValues values = new ContentValues();
 
-                values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getmId());
+                values.put(MovieContract.MovieEntry.COLUMN_MOVIE_ID, movie.getId());
                 values.put(MovieContract.MovieEntry.COLUMN_MOVIE_RELEASE_DATE, movie.getReleaseDate());
-                values.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getmTitle());
-                values.put(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_AVERAGE, movie.getmrating());
-                values.put(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH, movie.getmposterUrl());
+                values.put(MovieContract.MovieEntry.COLUMN_MOVIE_TITLE, movie.getTitle());
+                values.put(MovieContract.MovieEntry.COLUMN_MOVIE_VOTE_AVERAGE, movie.getRating());
+                values.put(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH, movie.getPosterUrl());
                 values.put(MovieContract.MovieEntry.COLUMN_MOVIE_OVERVIEW, movie.getMovieOverview());
 
                 if (!isFavorite){
                     getContext().getContentResolver().insert(MovieContract.MovieEntry.CONTENT_URI, values);
                     favButton.setSelected(true);
                     isFavorite = true;
-                    Toast.makeText(getActivity(),"selected "+ movie.getmTitle()+"  as fav movie", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"selected "+ movie.getTitle()+"  as fav movie", Toast.LENGTH_SHORT).show();
                 } else {
-                    getContext().getContentResolver().delete(MovieContract.MovieEntry.movieUriId(movie.getmId()), null, new String[]{movie.getmId()});
+                    getContext().getContentResolver().delete(MovieContract.MovieEntry.movieUriId(movie.getId()), null, new String[]{movie.getId()});
                     favButton.setSelected(false);
                     isFavorite = false;
-                    Toast.makeText(getActivity(),"removed "+ movie.getmTitle()+"  as fav movie", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"removed "+ movie.getTitle()+"  as fav movie", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -170,7 +166,7 @@ public class MovieDetailFragment extends Fragment implements FetchTrailers.Trail
 
     public boolean isFavorite(){
         Cursor cursor = getActivity().getContentResolver().query(MovieContract.MovieEntry.CONTENT_URI,
-                MovieContract.MovieEntry.MOVIE_COLUMNS,MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?", new String[]{movie.getmId()},null);
+                MovieContract.MovieEntry.MOVIE_COLUMNS,MovieContract.MovieEntry.COLUMN_MOVIE_ID + "=?", new String[]{movie.getId()},null);
        boolean fav = false;
         if (cursor.moveToFirst()){
             fav = true;
@@ -181,13 +177,13 @@ public class MovieDetailFragment extends Fragment implements FetchTrailers.Trail
 
     public void updateTrailers(){
         FetchTrailers fetchMovieTrailer = new FetchTrailers(this);
-        fetchMovieTrailer.execute(movie.getmId());
+        fetchMovieTrailer.execute(movie.getId());
         Log.d(TAG, "trailer fetch completed");
     }
 
     public void updateReviews(){
         FetchReviews fetchReviews = new FetchReviews(this);
-        fetchReviews.execute(movie.getmId());
+        fetchReviews.execute(movie.getId());
         Log.d(TAG, "Review fetch completed");
 
     }

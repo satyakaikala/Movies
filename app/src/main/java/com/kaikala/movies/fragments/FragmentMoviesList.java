@@ -7,13 +7,11 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,12 +20,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import com.kaikala.movies.R;
-import com.kaikala.movies.activities.MovieDetailActivity;
 import com.kaikala.movies.adapters.MoviePoster;
 import com.kaikala.movies.adapters.MoviePosterAdapter;
 import com.kaikala.movies.constants.Constants;
@@ -167,11 +162,11 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
         if (cursor.moveToFirst()) {
             do {
                 MoviePoster poster = new MoviePoster();
-                poster.setmId(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_ID));
-                poster.setmTitle(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_TITLE));
-                 poster.setMposterUrl(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_POSTER_PATH));
+                poster.setId(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_ID));
+                poster.setTitle(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_TITLE));
+                 poster.setPosterUrl(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_POSTER_PATH));
                 poster.setMovieOverview(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_OVERVIEW));
-                poster.setMrating(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_VOTE_AVERAGE));
+                poster.setRating(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_VOTE_AVERAGE));
                 poster.setReleaseDate(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_RELEASE_DATE));
                 Log.d(TAG, "poster values : " + poster);
                 moviePosters.add(poster);
@@ -198,8 +193,9 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
         }
         moviePosterAdapter = new MoviePosterAdapter(getActivity(), this, moviePosters);
         movieThumbnailView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-        movieThumbnailView.addItemDecoration(new GridSpacingItemDecoration(getActivity(), 2, 5, true));
+        movieThumbnailView.addItemDecoration(new GridSpacingItemDecoration(2, dpTopx(getActivity(), 10), true));
         movieThumbnailView.setItemAnimator(new DefaultItemAnimator());
+        movieThumbnailView.setHasFixedSize(true);
         movieThumbnailView.setAdapter(moviePosterAdapter);
 
 //        movieThumbnailView.setOnItemClickListener(new AdapterView.OnItemClickListener() {

@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.kaikala.movies.R;
@@ -37,16 +36,6 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
         this.moviePosters = moviePosters;
     }
 
-    void setCursor(Cursor c) {
-        this.cursor = c;
-        notifyDataSetChanged();
-    }
-
-    String getPosterAtPosition(int position) {
-        cursor.moveToPosition(position);
-        return cursor.getString(MovieContract.MovieEntry.COL_MOVIE_POSTER_PATH);
-    }
-
     @Override
     public MoviePosterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
@@ -56,11 +45,8 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 
     @Override
     public void onBindViewHolder(MoviePosterViewHolder holder, int position) {
-      //  cursor.moveToPosition(position);
-
-        MoviePoster moviePoster = moviePosters.get(position);
         //https://image.tmdb.org/t/p/w185//nBNZadXqJSdt05SHLqgT0HuC5Gm.jpg
-        final String POSTER_URL = Constants.POSTER_BASE_URL + Constants.POSTER_SIZE + moviePoster.getmposterUrl();
+        final String POSTER_URL = Constants.POSTER_BASE_URL + Constants.POSTER_SIZE + moviePosters.get(position).getPosterUrl();
         Log.v(TAG, "poster urls :" + POSTER_URL);
         Picasso.with(context).load(POSTER_URL.trim())
                 .noFade()
@@ -71,10 +57,6 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
 
     @Override
     public int getItemCount() {
-        int count = 0;
-        if (cursor != null) {
-            count = cursor.getCount();
-        }
         return moviePosters.size();
     }
 

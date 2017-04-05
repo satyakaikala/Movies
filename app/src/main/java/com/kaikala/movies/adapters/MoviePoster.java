@@ -6,37 +6,37 @@ import android.os.Parcelable;
 /**
  * Created by kaIkala on 8/17/2016.
  */
-public class MoviePoster implements Parcelable{
+public class MoviePoster implements Parcelable {
 
-    private String mTitle;
-    private String mrating;
-    private String mposterUrl;
+    private String title;
+    private String rating;
+    private String posterUrl;
     private String movieOverview;
     private String releaseDate;
-    private String mId;
+    private String id;
     private String isFav;
 
-    public MoviePoster(){
+    public MoviePoster() {
 
     }
 
     public MoviePoster(String posterUrl, String overview, String title, String release, String rating, String id) {
-        mTitle = title;
-        mposterUrl = posterUrl;
+        this.title = title;
+        this.posterUrl = posterUrl;
         movieOverview = overview;
         releaseDate = release;
-        mrating = rating;
-        mId = id;
+        this.rating = rating;
+        this.id = id;
 
     }
 
     protected MoviePoster(Parcel in) {
-        mTitle = in.readString();
-        mrating = in.readString();
-        mposterUrl = in.readString();
+        title = in.readString();
+        rating = in.readString();
+        posterUrl = in.readString();
         movieOverview = in.readString();
         releaseDate = in.readString();
-        mId = in.readString();
+        id = in.readString();
         isFav = in.readString();
     }
 
@@ -59,17 +59,17 @@ public class MoviePoster implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(mTitle);
-        dest.writeString(mrating);
-        dest.writeString(mposterUrl);
+        dest.writeString(title);
+        dest.writeString(rating);
+        dest.writeString(posterUrl);
         dest.writeString(movieOverview);
         dest.writeString(releaseDate);
-        dest.writeString(mId);
+        dest.writeString(id);
         dest.writeString(isFav);
     }
 
-    public String getmTitle() {
-        return mTitle;
+    public String getTitle() {
+        return title;
     }
 
     public String getMovieOverview() {
@@ -81,21 +81,21 @@ public class MoviePoster implements Parcelable{
         return releaseDate;
     }
 
-    public String getmrating() {
-        return mrating;
+    public String getRating() {
+        return rating;
     }
 
 
-    public String getmposterUrl() {
-        return mposterUrl;
+    public String getPosterUrl() {
+        return posterUrl;
     }
 
-    public String getmId(){
-        return mId;
+    public String getId() {
+        return id;
     }
 
-    public void setmId(String mId) {
-        this.mId = mId;
+    public void setId(String mId) {
+        this.id = mId;
     }
 
     public void setReleaseDate(String releaseDate) {
@@ -106,27 +106,27 @@ public class MoviePoster implements Parcelable{
         this.movieOverview = movieOverview;
     }
 
-    public void setMposterUrl(String mposterUrl) {
-        this.mposterUrl = mposterUrl;
+    public void setPosterUrl(String mposterUrl) {
+        this.posterUrl = mposterUrl;
     }
 
-    public void setMrating(String mrating) {
-        this.mrating = mrating;
+    public void setRating(String mrating) {
+        this.rating = mrating;
     }
 
-    public void setmTitle(String mTitle) {
-        this.mTitle = mTitle;
+    public void setTitle(String mTitle) {
+        this.title = mTitle;
     }
 
     @Override
     public String toString() {
         return "MoviePoster{" +
-                "mTitle='" + mTitle + '\'' +
-                ", mrating='" + mrating + '\'' +
-                ", mposterUrl='" + mposterUrl + '\'' +
+                "title='" + title + '\'' +
+                ", rating='" + rating + '\'' +
+                ", posterUrl='" + posterUrl + '\'' +
                 ", movieOverview='" + movieOverview + '\'' +
                 ", releaseDate='" + releaseDate + '\'' +
-                ", mId='" + mId + '\'' +
+                ", id='" + id + '\'' +
                 ", isFav='" + isFav + '\'' +
                 '}';
     }

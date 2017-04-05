@@ -15,10 +15,8 @@ public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
     private int spanCount;
     private int spacing;
     private boolean includeEdge;
-    private static Context context;
 
-    public GridSpacingItemDecoration(Context ctx, int spanCount, int spacing, boolean includeEdge) {
-        this.context = ctx;
+    public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
         this.spanCount = spanCount;
         this.spacing = spacing;
         this.includeEdge = includeEdge;
@@ -48,7 +46,7 @@ public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
     /**
      * Helper method to convert dp to pixel
      */
-    public static int dpTopx (int dp) {
+    public static int dpTopx (Context context, int dp) {
         Resources resources = context.getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.getDisplayMetrics()));
     }
