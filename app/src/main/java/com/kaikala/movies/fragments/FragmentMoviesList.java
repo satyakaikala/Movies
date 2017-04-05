@@ -11,6 +11,10 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,10 +39,12 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.kaikala.movies.fragments.GridSpacingItemDecoration.dpTopx;
+
 /**
  * Created by kaIkala on 8/17/2016.
  */
-public class FragmentMoviesList extends Fragment implements FetchPosters.PostersFetchCompleted {
+public class FragmentMoviesList extends Fragment implements FetchPosters.PostersFetchCompleted, MoviePosterAdapter.MoviePosterOnClickHandler {
 
 
     private static final String TAG = FragmentMoviesList.class.getSimpleName();
@@ -46,8 +52,8 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
     private ArrayList<MoviePoster> moviePosters;
     private static int index;
 
-    @BindView(R.id.grid_view)
-    GridView movieThumbnailView;
+    @BindView(R.id.recycler_view)
+    RecyclerView movieThumbnailView;
 
     private NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
     IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -66,7 +72,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(Constants.MOVIE_POSTERS, moviePosters);
-        outState.putInt(Constants.SCROLL_POSITION, movieThumbnailView.getFirstVisiblePosition());
+        outState.putInt(Constants.SCROLL_POSITION, movieThumbnailView.getScrollState());
     }
 
     @Override
@@ -137,7 +143,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
 
     public void fetchFavoriteCollection(){
         moviePosters = getFavoriteCollection();
-        moviePosterAdapter = new MoviePosterAdapter(getActivity(), moviePosters);
+        moviePosterAdapter = new MoviePosterAdapter(getActivity(), this, moviePosters);
         movieThumbnailView.setAdapter(moviePosterAdapter);
         moviePosterAdapter.notifyDataSetChanged();
     }
@@ -181,31 +187,33 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
 
         View view = inflater.inflate(R.layout.fragment_movies_list, container, false);
         ButterKnife.bind(this, view);
+        movieThumbnailView = (RecyclerView)view.findViewById(R.id.recycler_view);
         if (!Constants.isOnline(getContext())) {
             Toast.makeText(getActivity(), "no internet", Toast.LENGTH_SHORT).show();
         }
         if (savedInstanceState != null) {
             moviePosters = savedInstanceState.getParcelableArrayList(Constants.MOVIE_POSTERS);
         } else {
-            moviePosters = new ArrayList<MoviePoster>();
+            moviePosters = new ArrayList<>();
         }
-        moviePosterAdapter = new MoviePosterAdapter(getActivity(), moviePosters);
-
+        moviePosterAdapter = new MoviePosterAdapter(getActivity(), this, moviePosters);
+        movieThumbnailView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        movieThumbnailView.addItemDecoration(new GridSpacingItemDecoration(getActivity(), 2, 5, true));
+        movieThumbnailView.setItemAnimator(new DefaultItemAnimator());
         movieThumbnailView.setAdapter(moviePosterAdapter);
 
-        movieThumbnailView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getActivity(), "pressed item is" + position, Toast.LENGTH_LONG).show();
-
-
-                Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-                intent.putExtra(Intent.EXTRA_TEXT, moviePosters.get(position));
-                startActivity(intent);
-            }
-        });
+//        movieThumbnailView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                Toast.makeText(getActivity(), "pressed item is" + position, Toast.LENGTH_LONG).show();
+//
+//
+//                Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+//                intent.putExtra(Intent.EXTRA_TEXT, moviePosters.get(position));
+//                startActivity(intent);
+//            }
+//        });
         movieThumbnailView.setVerticalScrollbarPosition(index);
-        movieThumbnailView.setSmoothScrollbarEnabled(true);
         return view;
     }
 
@@ -216,6 +224,11 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
             moviePosters.addAll(list);
         }
         moviePosterAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClick(String poster) {
+
     }
 
     public class NetworkChangeReceiver extends BroadcastReceiver {
