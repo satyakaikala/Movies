@@ -116,8 +116,10 @@ public class FetchReviews extends AsyncTask <String, Void, ArrayList<MovieReview
     protected void onPostExecute(ArrayList<MovieReviews> movieReviews) {
         super.onPostExecute(movieReviews);
         fetchCompleted.reviewFetchCompleted(movieReviews);
-        for (MovieReviews r : movieReviews){
-            Log.d(TAG, "Reviews:" + " " + movieReviews);
+        if(movieReviews!=null) {
+            for (MovieReviews r : movieReviews) {
+                Log.d(TAG, "Reviews:" + " " + movieReviews);
+            }
         }
     }
 

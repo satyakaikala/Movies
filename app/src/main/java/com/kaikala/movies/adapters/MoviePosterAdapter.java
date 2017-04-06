@@ -1,6 +1,7 @@
 package com.kaikala.movies.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -61,7 +62,7 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
     }
 
     public interface MoviePosterOnClickHandler {
-        void onClick(String poster);
+        void onClick(MoviePoster poster);
     }
 
     class MoviePosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -73,15 +74,12 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
         public MoviePosterViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(this);
+            posterImage.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View view) {
-            int adapterPosition = getAdapterPosition();
-            cursor.moveToPosition(adapterPosition);
-            int posterColumn = cursor.getColumnIndex(MovieContract.MovieEntry.COLUMN_MOVIE_POSTER_PATH);
-            posterOnClickHandler.onClick(cursor.getString(posterColumn));
+            posterOnClickHandler.onClick(moviePosters.get(getAdapterPosition()));
         }
     }
 }

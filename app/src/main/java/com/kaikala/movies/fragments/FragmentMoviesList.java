@@ -10,9 +10,14 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.kaikala.movies.R;
+import com.kaikala.movies.activities.MovieDetailActivity;
 import com.kaikala.movies.adapters.MoviePoster;
 import com.kaikala.movies.adapters.MoviePosterAdapter;
 import com.kaikala.movies.constants.Constants;
@@ -39,7 +45,7 @@ import static com.kaikala.movies.fragments.GridSpacingItemDecoration.dpTopx;
 /**
  * Created by kaIkala on 8/17/2016.
  */
-public class FragmentMoviesList extends Fragment implements FetchPosters.PostersFetchCompleted, MoviePosterAdapter.MoviePosterOnClickHandler {
+public class FragmentMoviesList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener, FetchPosters.PostersFetchCompleted, MoviePosterAdapter.MoviePosterOnClickHandler {
 
 
     private static final String TAG = FragmentMoviesList.class.getSimpleName();
@@ -47,8 +53,12 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
     private ArrayList<MoviePoster> moviePosters;
     private static int index;
 
+    private static final int LOADER = 0;
+
     @BindView(R.id.recycler_view)
     RecyclerView movieThumbnailView;
+    @BindView(R.id.swipe_refresh)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     private NetworkChangeReceiver networkChangeReceiver = new NetworkChangeReceiver();
     IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
@@ -80,6 +90,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
         }
         setHasOptionsMenu(true);
 
+
     }
 
     @Override
@@ -92,7 +103,6 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -136,7 +146,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
         super.onPrepareOptionsMenu(menu);
     }
 
-    public void fetchFavoriteCollection(){
+    public void fetchFavoriteCollection() {
         moviePosters = getFavoriteCollection();
         moviePosterAdapter = new MoviePosterAdapter(getActivity(), this, moviePosters);
         movieThumbnailView.setAdapter(moviePosterAdapter);
@@ -144,8 +154,8 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
     }
 
     public void fetchMovies(String selectedOrder) {
-            FetchPosters fetchMovies = new FetchPosters(this);
-            fetchMovies.execute(selectedOrder);
+        FetchPosters fetchMovies = new FetchPosters(this);
+        fetchMovies.execute(selectedOrder);
     }
 
     @Override
@@ -164,7 +174,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
                 MoviePoster poster = new MoviePoster();
                 poster.setId(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_ID));
                 poster.setTitle(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_TITLE));
-                 poster.setPosterUrl(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_POSTER_PATH));
+                poster.setPosterUrl(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_POSTER_PATH));
                 poster.setMovieOverview(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_OVERVIEW));
                 poster.setRating(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_VOTE_AVERAGE));
                 poster.setReleaseDate(cursor.getString(MovieContract.MovieEntry.COL_MOVIE_RELEASE_DATE));
@@ -182,7 +192,7 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
 
         View view = inflater.inflate(R.layout.fragment_movies_list, container, false);
         ButterKnife.bind(this, view);
-        movieThumbnailView = (RecyclerView)view.findViewById(R.id.recycler_view);
+        movieThumbnailView = (RecyclerView) view.findViewById(R.id.recycler_view);
         if (!Constants.isOnline(getContext())) {
             Toast.makeText(getActivity(), "no internet", Toast.LENGTH_SHORT).show();
         }
@@ -197,19 +207,14 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
         movieThumbnailView.setItemAnimator(new DefaultItemAnimator());
         movieThumbnailView.setHasFixedSize(true);
         movieThumbnailView.setAdapter(moviePosterAdapter);
-
-//        movieThumbnailView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Toast.makeText(getActivity(), "pressed item is" + position, Toast.LENGTH_LONG).show();
-//
-//
-//                Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
-//                intent.putExtra(Intent.EXTRA_TEXT, moviePosters.get(position));
-//                startActivity(intent);
-//            }
-//        });
         movieThumbnailView.setVerticalScrollbarPosition(index);
+
+        swipeRefreshLayout.setOnRefreshListener(this);
+        swipeRefreshLayout.setRefreshing(true);
+        onRefresh();
+        swipeAction();
+        getActivity().getSupportLoaderManager().initLoader(LOADER, null, this);
+
         return view;
     }
 
@@ -223,8 +228,56 @@ public class FragmentMoviesList extends Fragment implements FetchPosters.Posters
     }
 
     @Override
-    public void onClick(String poster) {
+    public void onClick(MoviePoster poster) {
+        Intent intent = new Intent(getActivity(), MovieDetailActivity.class);
+        intent.putExtra(Intent.EXTRA_TEXT, poster);
+        startActivity(intent);
+    }
 
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        return new CursorLoader(getActivity(), MovieContract.MovieEntry.CONTENT_URI,
+                MovieContract.MovieEntry.MOVIE_COLUMNS,
+                null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        swipeRefreshLayout.setRefreshing(false);
+        if (data.getCount() != 0) {
+
+        }
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void onRefresh() {
+
+        if (Constants.isOnline(getContext()) && moviePosterAdapter.getItemCount() == 0) {
+            String order = Constants.getSelectedOrder(getContext());
+            fetchMovies(order);
+        } else {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+    }
+
+    private void swipeAction() {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+                getActivity().getContentResolver().delete(MovieContract.MovieEntry.movieUriId(moviePosters.get(viewHolder.getAdapterPosition()).getId()), null, null);
+            }
+        }).attachToRecyclerView(movieThumbnailView);
     }
 
     public class NetworkChangeReceiver extends BroadcastReceiver {
