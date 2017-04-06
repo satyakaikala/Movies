@@ -276,6 +276,7 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 getActivity().getContentResolver().delete(MovieContract.MovieEntry.movieUriId(moviePosters.get(viewHolder.getAdapterPosition()).getId()), null, null);
+                moviePosterAdapter.notifyDataSetChanged();
             }
         }).attachToRecyclerView(movieThumbnailView);
     }
