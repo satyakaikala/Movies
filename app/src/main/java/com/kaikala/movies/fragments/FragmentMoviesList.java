@@ -27,18 +27,25 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.kaikala.movies.BuildConfig;
 import com.kaikala.movies.R;
 import com.kaikala.movies.activities.MovieDetailActivity;
 import com.kaikala.movies.adapters.MoviePoster;
 import com.kaikala.movies.adapters.MoviePosterAdapter;
+import com.kaikala.movies.adapters.MovieResponse;
 import com.kaikala.movies.constants.Constants;
 import com.kaikala.movies.data.MovieContract;
+import com.kaikala.movies.operations.ApiClient;
 import com.kaikala.movies.operations.FetchPosters;
+import com.kaikala.movies.operations.MovieNetworkInterface;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.kaikala.movies.fragments.GridSpacingItemDecoration.dpTopx;
 
@@ -52,6 +59,8 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
     private MoviePosterAdapter moviePosterAdapter;
     private ArrayList<MoviePoster> moviePosters;
     private static int index;
+
+    private MovieNetworkInterface networkService = ApiClient.getClient().create(MovieNetworkInterface.class);
 
     private static final int LOADER = 0;
 
@@ -112,7 +121,21 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
             case R.id.popular:
                 selectedOrder = Constants.POPULAR;
                 Constants.setSelectedOrder(getActivity(), selectedOrder);
-                fetchMovies(selectedOrder);
+//                fetchMovies(selectedOrder);
+                Call<MovieResponse> call = networkService.getPopularMovie(BuildConfig.API_KEY);
+
+                call.enqueue(new Callback<MovieResponse>() {
+                    @Override
+                    public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+                        moviePosters = response.body().getResults();
+                    }
+
+                    @Override
+                    public void onFailure(Call<MovieResponse> call, Throwable t) {
+
+                    }
+                });
+
                 return true;
             case R.id.topRated:
                 selectedOrder = Constants.TOP_RATED;

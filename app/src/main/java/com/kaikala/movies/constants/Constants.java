@@ -32,6 +32,8 @@ public class Constants {
     public static final String SCROLL_POSITION = "scroll_position";
     public static final String TABLET = "tablet";
     //Http constants
+    // "http://api.themoviedb.org/3/"
+    public static final String BASE_URL = "http://api.themoviedb.org/3/";
     public static final String SCHEME = "http";
     public static final String AUTHORITY = "api.themoviedb.org";
     public static final String NUMBER = "3";
