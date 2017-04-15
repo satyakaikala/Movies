@@ -10,5 +10,6 @@
     <string name="poster_base_url">http://image.tmdb.org/t/p/w500/</string>
     <string name="reviewsText_title">Reviews:</string>
     <string name="trailersText_title">Trailers:</string>
-
+    <string name="action_search">Search</string>
+    <string name="search_hint">Enter Movie Name</string>
 </resources>

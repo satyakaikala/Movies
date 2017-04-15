@@ -12,13 +12,10 @@ public class MovieResponse {
 
     @SerializedName("page")
     private int page;
-
     @SerializedName("results")
     private ArrayList<MoviePoster> results;
-
     @SerializedName("totalResults")
     private int totalResults;
-
     @SerializedName("totalPages")
     private int totalPages;
 

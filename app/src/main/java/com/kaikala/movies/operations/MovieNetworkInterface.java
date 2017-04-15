@@ -17,13 +17,13 @@ public interface MovieNetworkInterface {
     @GET("movie/top_rated")
     Call<MovieResponse> getTopRatedMovie(@Query("api_key") String apiKey);
 
-    @GET("movie/favorite")
-    Call<MovieResponse> getFavoriteMovie(@Query("api_key") String apiKey);
-
     @GET("movie/popular")
     Call<MovieResponse> getPopularMovie(@Query("api_key") String apiKey);
 
     @GET("movie/{id}")
     Call<MovieResponse> getMovieDetails(@Path("id") int id, @Query("api_key") String apiKey);
+
+    @GET("search/movie")
+    Call<MovieResponse> getSearchResults(@Query("api_key") String apiKey, @Query("query") String query);
 
 }

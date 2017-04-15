@@ -1,6 +1,7 @@
 package com.kaikala.movies.fragments;
 
 
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -17,6 +18,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,6 +42,7 @@ import com.kaikala.movies.operations.FetchPosters;
 import com.kaikala.movies.operations.MovieNetworkInterface;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -111,42 +114,56 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.main, menu);
+
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+    }
+
+    private void handleCall(Call<MovieResponse> call) {
+        call.enqueue(new Callback<MovieResponse>() {
+            @Override
+            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+
+                moviePosters = response.body().getResults();
+                Log.d("Response","===:  "+moviePosters.toString());
+                moviePosterAdapter = new MoviePosterAdapter(getActivity(), FragmentMoviesList.this, moviePosters);
+                movieThumbnailView.setAdapter(moviePosterAdapter);
+                moviePosterAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<MovieResponse> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         String selectedOrder;
+        Call<MovieResponse> call;
         switch (id) {
             case R.id.popular:
                 selectedOrder = Constants.POPULAR;
                 Constants.setSelectedOrder(getActivity(), selectedOrder);
-//                fetchMovies(selectedOrder);
-                Call<MovieResponse> call = networkService.getPopularMovie(BuildConfig.API_KEY);
-
-                call.enqueue(new Callback<MovieResponse>() {
-                    @Override
-                    public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                        moviePosters = response.body().getResults();
-                    }
-
-                    @Override
-                    public void onFailure(Call<MovieResponse> call, Throwable t) {
-
-                    }
-                });
-
+                call = networkService.getPopularMovie(BuildConfig.API_KEY);
+                handleCall(call);
                 return true;
             case R.id.topRated:
                 selectedOrder = Constants.TOP_RATED;
                 Constants.setSelectedOrder(getActivity(), selectedOrder);
-                fetchMovies(selectedOrder);
+                call = networkService.getTopRatedMovie(BuildConfig.API_KEY);
+                handleCall(call);
                 return true;
             case R.id.favoirte:
                 selectedOrder = Constants.FAVORITE;
                 Constants.setSelectedOrder(getActivity(), selectedOrder);
                 fetchFavoriteCollection();
                 return true;
+            case R.id.action_search:
+                //implement search functionality
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -303,6 +320,7 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
             }
         }).attachToRecyclerView(movieThumbnailView);
     }
+
 
     public class NetworkChangeReceiver extends BroadcastReceiver {
 
