@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.kaikala.movies.BuildConfig;
 import com.kaikala.movies.adapters.MoviePoster;
 import com.kaikala.movies.operations.FetchPosters;
 
@@ -43,6 +44,7 @@ public class Constants {
     public static final String API_KEY = "api_key";
     public static final String POSTER_BASE_URL = "https://image.tmdb.org/t/p/";
     public static final String POSTER_SIZE = "w185";
+    public static final String KEY = BuildConfig.API_KEY;
     //trailers
     public static final String BASE_TRAILER_URL = "http://www.youtube.com/watch?v=";
     public static final String BASE_TRAILER_IMAGE_URL = "http://img.youtube.com/vi/";
