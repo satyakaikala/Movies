@@ -26,4 +26,7 @@ public interface MovieNetworkInterface {
     @GET("movie/{id}")
     Call<MovieResponse> getMovieDetails(@Path("id") int id, @Query("api_key") String apiKey);
 
+    @GET("search/movie")
+    Call<MovieResponse> getSearchResults(@Query("api_key") String apiKey, @Query("query") String query);
+
 }
