@@ -1,6 +1,5 @@
 package com.kaikala.movies.operations;
 
-import com.kaikala.movies.adapters.MoviePoster;
 import com.kaikala.movies.adapters.MovieResponse;
 
 import retrofit2.Call;
@@ -14,11 +13,12 @@ import retrofit2.http.Query;
 
 public interface MovieNetworkInterface {
 
+
+    //https://api.themoviedb.org/3/movie/550?api_key=
+    //http://api.themoviedb.org/3/movie/popular?api_key=
+
     @GET("movie/top_rated")
     Call<MovieResponse> getTopRatedMovie(@Query("api_key") String apiKey);
-
-    @GET("movie/favorite")
-    Call<MovieResponse> getFavoriteMovie(@Query("api_key") String apiKey);
 
     @GET("movie/popular")
     Call<MovieResponse> getPopularMovie(@Query("api_key") String apiKey);

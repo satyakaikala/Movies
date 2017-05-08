@@ -15,8 +15,8 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,7 +36,6 @@ import com.kaikala.movies.adapters.MovieResponse;
 import com.kaikala.movies.constants.Constants;
 import com.kaikala.movies.data.MovieContract;
 import com.kaikala.movies.operations.ApiClient;
-import com.kaikala.movies.operations.FetchPosters;
 import com.kaikala.movies.operations.MovieNetworkInterface;
 
 import java.util.ArrayList;
@@ -52,14 +51,14 @@ import static com.kaikala.movies.fragments.GridSpacingItemDecoration.dpTopx;
 /**
  * Created by kaIkala on 8/17/2016.
  */
-public class FragmentMoviesList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener, FetchPosters.PostersFetchCompleted, MoviePosterAdapter.MoviePosterOnClickHandler {
+public class FragmentMoviesList extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, SwipeRefreshLayout.OnRefreshListener, MoviePosterAdapter.MoviePosterOnClickHandler {
 
 
     private static final String TAG = FragmentMoviesList.class.getSimpleName();
     private MoviePosterAdapter moviePosterAdapter;
     private ArrayList<MoviePoster> moviePosters;
     private static int index;
-
+    private int order = -1;
     private MovieNetworkInterface networkService = ApiClient.getClient().create(MovieNetworkInterface.class);
 
     private static final int LOADER = 0;
@@ -76,7 +75,7 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
     public void onStart() {
         super.onStart();
         Log.i(TAG, "onStart called");
-        String order = Constants.getSelectedOrder(getActivity());
+        order = Constants.getSelectedOrder(getActivity());
         fetchMovies(order);
         getActivity().registerReceiver(networkChangeReceiver, filter);
     }
@@ -98,8 +97,6 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
             index = savedInstanceState.getInt(Constants.SCROLL_POSITION);
         }
         setHasOptionsMenu(true);
-
-
     }
 
     @Override
@@ -116,35 +113,21 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        String selectedOrder;
+        int selectedOrder;
         switch (id) {
             case R.id.popular:
-                selectedOrder = Constants.POPULAR;
-                Constants.setSelectedOrder(getActivity(), selectedOrder);
-//                fetchMovies(selectedOrder);
-                Call<MovieResponse> call = networkService.getPopularMovie(BuildConfig.API_KEY);
-
-                call.enqueue(new Callback<MovieResponse>() {
-                    @Override
-                    public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-                        moviePosters = response.body().getResults();
-                    }
-
-                    @Override
-                    public void onFailure(Call<MovieResponse> call, Throwable t) {
-
-                    }
-                });
-
+                order = Constants.POPULAR;
+                Constants.setSelectedOrder(getActivity(), order);
+                fetchMovies(order);
                 return true;
             case R.id.topRated:
-                selectedOrder = Constants.TOP_RATED;
-                Constants.setSelectedOrder(getActivity(), selectedOrder);
-                fetchMovies(selectedOrder);
+                order = Constants.TOP_RATED;
+                Constants.setSelectedOrder(getActivity(), order);
+                fetchMovies(order);
                 return true;
             case R.id.favoirte:
-                selectedOrder = Constants.FAVORITE;
-                Constants.setSelectedOrder(getActivity(), selectedOrder);
+                order = Constants.FAVORITE;
+                Constants.setSelectedOrder(getActivity(), order);
                 fetchFavoriteCollection();
                 return true;
             default:
@@ -154,7 +137,7 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
-        String order = Constants.getSelectedOrder(getActivity());
+        int order = Constants.getSelectedOrder(getActivity());
         switch (order) {
             case Constants.POPULAR:
                 menu.findItem(R.id.popular).setChecked(true);
@@ -176,14 +159,51 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
         moviePosterAdapter.notifyDataSetChanged();
     }
 
-    public void fetchMovies(String selectedOrder) {
-        FetchPosters fetchMovies = new FetchPosters(this);
-        fetchMovies.execute(selectedOrder);
+    public void fetchMovies(int selectedOrder) {
+        Log.d(TAG, "selected order is :" + selectedOrder);
+        Call<MovieResponse> call;
+        switch (selectedOrder) {
+            case Constants.POPULAR:
+                Log.d(TAG, "selected order is : POPULAR  " + selectedOrder);
+                call = networkService.getPopularMovie(BuildConfig.API_KEY);
+                call.enqueue(new Callback<MovieResponse>() {
+                    @Override
+                    public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+                        moviePosters = response.body().getResults();
+                        moviePosterAdapter = new MoviePosterAdapter(getActivity(), FragmentMoviesList.this, moviePosters);
+                        movieThumbnailView.setAdapter(moviePosterAdapter);
+                        moviePosterAdapter.notifyDataSetChanged();
+                    }
+                    @Override
+                    public void onFailure(Call<MovieResponse> call, Throwable t) {
+                        Log.d(TAG, "selected order is : POPULAR  failure" + t.toString());
+                    }
+                });
+                break;
+            case Constants.TOP_RATED:
+                call = networkService.getTopRatedMovie(BuildConfig.API_KEY);
+                Log.d(TAG, "selected order is : TOP_RATED  " + selectedOrder);
+                call.enqueue(new Callback<MovieResponse>() {
+                    @Override
+                    public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
+                        moviePosters = response.body().getResults();
+                        moviePosterAdapter = new MoviePosterAdapter(getActivity(), FragmentMoviesList.this, moviePosters);
+                        movieThumbnailView.setAdapter(moviePosterAdapter);
+                        moviePosterAdapter.notifyDataSetChanged();
+                    }
+                    @Override
+                    public void onFailure(Call<MovieResponse> call, Throwable t) {
+                        Log.d(TAG, "selected order is : TOP_RATED  failure : " + t.toString() );
+                    }
+                });
+                break;
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        fetchMovies(order);
         fetchFavoriteCollection();
     }
 
@@ -225,7 +245,7 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
             moviePosters = new ArrayList<>();
         }
         moviePosterAdapter = new MoviePosterAdapter(getActivity(), this, moviePosters);
-        movieThumbnailView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
+        movieThumbnailView.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         movieThumbnailView.addItemDecoration(new GridSpacingItemDecoration(2, dpTopx(getActivity(), 10), true));
         movieThumbnailView.setItemAnimator(new DefaultItemAnimator());
         movieThumbnailView.setHasFixedSize(true);
@@ -239,15 +259,6 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
         getActivity().getSupportLoaderManager().initLoader(LOADER, null, this);
 
         return view;
-    }
-
-    @Override
-    public void posterFetchCompleted(ArrayList<MoviePoster> list) {
-        if (list != null && list.size() > 0) {
-            moviePosters.clear();
-            moviePosters.addAll(list);
-        }
-        moviePosterAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -270,7 +281,6 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
         if (data.getCount() != 0) {
 
         }
-
     }
 
     @Override
@@ -280,9 +290,8 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onRefresh() {
-
         if (Constants.isOnline(getContext()) && moviePosterAdapter.getItemCount() == 0) {
-            String order = Constants.getSelectedOrder(getContext());
+            int order = Constants.getSelectedOrder(getContext());
             fetchMovies(order);
         } else {
             swipeRefreshLayout.setRefreshing(false);
@@ -311,7 +320,7 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
             Log.d(TAG, "Change in Network connectivity");
             if (intent.getExtras() != null) {
                 if (Constants.isOnline(getContext())) {
-                    String order = Constants.getSelectedOrder(getContext());
+                    int order = Constants.getSelectedOrder(getContext());
                     fetchMovies(order);
                 }
                 Log.d(TAG, "There's no network connectivity");

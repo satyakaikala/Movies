@@ -3,17 +3,26 @@ package com.kaikala.movies.adapters;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by kaIkala on 8/17/2016.
  */
 public class MoviePoster implements Parcelable {
 
+    @SerializedName("title")
     private String title;
+    @SerializedName("popularity")
     private String rating;
+    @SerializedName("poster_path")
     private String posterUrl;
+    @SerializedName("overview")
     private String movieOverview;
+    @SerializedName("release_date")
     private String releaseDate;
+    @SerializedName("id")
     private String id;
+
     private String isFav;
 
     public MoviePoster() {

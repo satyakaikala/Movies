@@ -1,7 +1,6 @@
 package com.kaikala.movies.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -10,10 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.kaikala.movies.R;
 import com.kaikala.movies.constants.Constants;
-import com.kaikala.movies.data.MovieContract;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -54,6 +53,8 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
                 .placeholder(R.drawable.place_holder_image_2)
                 .error(R.drawable.error_loading_image)
                 .into(holder.posterImage);
+        holder.posterTitle.setText(moviePosters.get(position).getTitle());
+        holder.posterReleaseDate.setText(moviePosters.get(position).getReleaseDate());
     }
 
     @Override
@@ -70,10 +71,16 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
         ImageView posterImage;
         @BindView(R.id.cv)
         CardView cv;
+        @BindView(R.id.poster_title)
+        TextView posterTitle;
+        @BindView(R.id.poster_release_date)
+        TextView posterReleaseDate;
 
         public MoviePosterViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            posterTitle.setOnClickListener(this);
+            posterReleaseDate.setOnClickListener(this);
             posterImage.setOnClickListener(this);
         }
 

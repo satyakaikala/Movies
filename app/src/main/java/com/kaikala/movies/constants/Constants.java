@@ -1,19 +1,10 @@
 package com.kaikala.movies.constants;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
-import android.support.v4.content.ContextCompat;
-import android.util.Log;
-
-import com.kaikala.movies.adapters.MoviePoster;
-import com.kaikala.movies.operations.FetchPosters;
-
-import java.util.ArrayList;
 
 /**
  * Created by skai0001 on 10/8/16.
@@ -23,9 +14,9 @@ public class Constants {
 
     Context context;
     public static final String TAG = Constants.class.getSimpleName();
-    public static final String POPULAR = "popular";
-    public static final String TOP_RATED = "top_rated";
-    public static final String FAVORITE = "favorite";
+    public static final int POPULAR = 0;
+    public static final int TOP_RATED = 1;
+    public static final int FAVORITE = 2;
     public static final String MOVIE_TRAILERS = "movie_trailers";
     public static final String MOVIE_REVIEWS = "movie_reviews";
     public static final String MOVIE_POSTERS = "movie_posters";
@@ -48,15 +39,15 @@ public class Constants {
     public static final String BASE_TRAILER_IMAGE_URL = "http://img.youtube.com/vi/";
     public static final String IMAGE_EXTRAS = "/0.jpg";
 
-    public static String getSelectedOrder(Context context) {
+    public static int getSelectedOrder(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        return prefs.getString("", "popular");
+        return prefs.getInt("", 0);
     }
 
-    public static void setSelectedOrder(Context context, String order) {
+    public static void setSelectedOrder(Context context, int order) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("", order);
+        editor.putInt("", order);
         editor.apply();
     }
 
