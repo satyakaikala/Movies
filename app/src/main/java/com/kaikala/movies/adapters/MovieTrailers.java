@@ -3,6 +3,7 @@ package com.kaikala.movies.adapters;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
 import com.kaikala.movies.constants.Constants;
 
 /**
@@ -11,11 +12,15 @@ import com.kaikala.movies.constants.Constants;
 
 public class MovieTrailers implements Parcelable {
 
+    @SerializedName("id")
     private String id;
+    @SerializedName("key")
     private String key;
+    @SerializedName("name")
     private String name;
+    @SerializedName("size")
     private String size;
-    private String type;
+    @SerializedName("site")
     private String site;
 
     public MovieTrailers (String id, String key, String name, String size, String site) {
@@ -41,10 +46,6 @@ public class MovieTrailers implements Parcelable {
 
     public String getSize() {
         return size;
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getrailerUrl(){

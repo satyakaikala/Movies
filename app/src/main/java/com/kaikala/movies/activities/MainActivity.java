@@ -11,15 +11,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.facebook.stetho.Stetho;
-import com.kaikala.movies.adapters.MovieResponse;
-import com.kaikala.movies.constants.Constants;
-import com.kaikala.movies.fragments.FragmentMoviesList;
+import com.kaikala.movies.BuildConfig;
 import com.kaikala.movies.R;
-import com.kaikala.movies.fragments.MovieDetailFragment;
+import com.kaikala.movies.adapters.MovieResponse;
+import com.kaikala.movies.fragments.FragmentMoviesList;
 
 import retrofit2.Call;
-
-import static com.kaikala.movies.constants.Constants.KEY;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -72,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
-            Call<MovieResponse> call = FragmentMoviesList.networkService.getSearchResults(KEY, query);
+            Call<MovieResponse> call = FragmentMoviesList.networkService.getSearchResults(BuildConfig.API_KEY, query);
             /**
              * Use this query to display search results like
              * 1. Getting the data from SQLite and showing in listview

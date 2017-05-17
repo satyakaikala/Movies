@@ -3,15 +3,21 @@ package com.kaikala.movies.adapters;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by kaikala on 11/4/16.
  */
 
 public class MovieReviews implements Parcelable {
 
+    @SerializedName("id")
     private String reviewID;
+    @SerializedName("author")
     private String reviewAuthor;
+    @SerializedName("author")
     private String reviewContent;
+    @SerializedName("url")
     private String reviewUrl;
 
     public MovieReviews(String id, String author, String content, String url){
