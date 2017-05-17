@@ -59,7 +59,7 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
     private ArrayList<MoviePoster> moviePosters;
     private static int index;
     private int order = -1;
-    private MovieNetworkInterface networkService = ApiClient.getClient().create(MovieNetworkInterface.class);
+    public static MovieNetworkInterface networkService = ApiClient.getClient().create(MovieNetworkInterface.class);
 
     private static final int LOADER = 0;
 
@@ -107,7 +107,7 @@ public class FragmentMoviesList extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.main, menu);
+        inflater.inflate(R.menu.context_menu, menu);
     }
 
     @Override
